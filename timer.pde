@@ -1,13 +1,13 @@
 import ddf.minim.*;
-import processing.sound.*;
 
 PImage bg;
-StopWatchTimer sw;
+StopWatchTimer swOne, swTwo;
 Minim minim;
 AudioPlayer file;
-SoundFile song;
 boolean isRunning;
-String timeToShow, theme;
+String timeOne, timeTwo, theme;
+String[] songs;
+int r;
 
 void setup() {
   size(800,600);
@@ -15,12 +15,14 @@ void setup() {
   
   theme = "xmas";
   
-  
   bg = loadImage("resources\\" + theme + "\\bg.jpg");
   bg.resize(width,height);
   minim = new Minim(this);
   background(bg);
   isRunning = false;
+  songs = new String[] {"angeles", "belen", "burrito", "campana", "esfera", 
+                        "falalala", "navidad", "noche", "peces", "rodolfo",
+                        "santa", "tambor", "town"};
 }
 
 void draw() {
@@ -31,18 +33,21 @@ void draw() {
     if (key == 's'){
       countdown();
       isRunning = true;
-      sw = new StopWatchTimer();  
-      sw.start();
-      file = minim.loadFile("resources\\" + theme + "\\song.mp3");
+      swOne = new StopWatchTimer();  
+      swOne.start();
+      swTwo = new StopWatchTimer();  
+      swTwo.start();
+      r = int(random(13));
+      file = minim.loadFile("resources\\" + theme + "\\" + songs[r] + ".mp3");
+      file.rewind();
       file.loop();
-      //song = new SoundFile(this, "C:\\Users\\rodav\\Documents\\Processing\\timer\\resources\\" + theme + "\\song.mp3");
-      //song.loop(0.5);
-      //song.rate(1.5);
     } else if (key == 'r'){
       isRunning = false;
     } else if (key == ' '){
-      sw.stop();
-      song.stop();
+      swOne.stop();
+    } else if (key ==  'b'){
+      swTwo.stop();
+      file.pause();
     }
   }
 }
@@ -52,11 +57,14 @@ void currentTime(){
   textSize(width/5);
   textAlign(CENTER, height/3);
   if (isRunning){
-    timeToShow = nf(sw.minute(), 2)+":"+nf(sw.second(), 2)+":"+nf(sw.hundrensec(), 2);
+    timeOne = nf(swOne.minute(), 2)+":"+nf(swOne.second(), 2)+":"+nf(swOne.hundrensec(), 2);
+    timeTwo = nf(swTwo.minute(), 2)+":"+nf(swTwo.second(), 2)+":"+nf(swTwo.hundrensec(), 2);
   } else {
-    timeToShow = "00:00:00";
+    timeOne = "00:00:00";
+    timeTwo = "00:00:00";
   }
-  text(timeToShow, width/2, height/2);
+  text(timeOne, width/2, height/3);
+  text(timeTwo, width/2, 2*height/3);
 }
 
 class StopWatchTimer {
